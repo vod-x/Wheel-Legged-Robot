@@ -39,129 +39,123 @@ wheel.length = 28;
 wheel.mass = 1;
 
 body2jonit_length = 160;
-% %%
-% %LQR calculate
-% 
-% %the variable of state
-% syms theta d_theta d2_theta;
-% syms x     d_x     d2_x;
-% syms phi   d_phi   d2_phi;
-% syms T_w   d_T_w   d2_T_w;
-% syms T_p   d_T_p   d2_T_p;
-% 
-% %the variable of constrain force
-% syms N_wp P_wp N_pb P_pb f;
-% 
-% %the constant which is determined by the mechanical structrue
-% syms R_w L_wp L_pb L_c;
-% syms m_w m_p  m_b; 
-% syms I_w I_p  I_b;
-% syms g;
-% 
-% N_pb = m_b * (d2_x + (L_wp + L_pb) * d_theta^2 * sin(theta) - ...
-%               (L_wp + L_pb) * d2_theta * cos(theta)... 
-%               + L_c * d_phi^2 *sin(phi)...
-%               - L_c * d2_phi *cos(phi));
-% 
-% P_pb = m_b * (g - (L_wp + L_pb) * d_theta^2 * cos(theta)...
-%               - (L_wp + L_pb) * d2_theta * sin(theta)...
-%               -L_c * d_phi^2 * cos(phi)...
-%               -L_c * d2_phi * sin(phi));
-% 
-% N_wp = m_p * (d2_x + L_wp * d_theta^2 * sin(theta)...
-%               - L_wp * d2_theta * cos(theta)) + N_pb;
-% 
-% P_wp = m_p * (g - L_wp * d_theta^2 * cos(theta)...
-%                 - L_wp * d2_theta * sin(theta)) + P_pb;
-% 
-% eq1 = d2_x == (-T_w - N_wp * R_w) / (I_w / R_w + m_w * R_w);
-% eq2 = I_p * d2_theta == (P_wp * L_wp + P_pb * L_pb) * sin(theta)...
-%                         + (N_wp * L_wp + N_pb * L_pb) * cos(theta)...
-%                         - T_w + T_p;
-% eq3 = I_b * d2_phi ==   P_pb * L_c * sin(phi)...
-%                      + N_pb * L_c * cos(phi)...
-%                      - T_p;                        
-% 
-% model_solve = solve([eq1 eq2 eq3], [d2_theta, d2_x, d2_phi]);
-% X = [x, d_x, phi, d_phi, theta, d_theta].';
-% dX = [d_x,     simplify(model_solve.d2_x),   ...
-%       d_phi,   simplify(model_solve.d2_phi), ...
-%       d_theta, simplify(model_solve.d2_theta)].';
-% 
-% 
-% U = [T_w T_p].';
-% 
-% A_sym = jacobian(dX,X);
-% B_sym = jacobian(dX,U);
-% 
-% Ls = 0.12:0.01:0.38;
-% Ks = zeros(2, 6, length(Ls));
-% 
-% for step = 1:length(Ls)
-% %变量
-%     R_w = wheel.radius/1000; %车轮的半径
-%     m_w = wheel.mass; %驱动轮转子质量
-%     I_w = m_w*R_w^2/2;%m_w*R^2/2; %驱动轮转动惯量 0.00104 0.0004656
-%     L_c = body2jonit_length/1000; %车体质心到关节中点（用于计算）
-%     m_p = (big_rod.mass + little_rod.mass)*2; %摆杆质量
-%     L_pb = Ls(step)/2; %摆杆中心到驱动关节
-%     L_wp = Ls(step)/2; %摆杆中心到驱动轮
-%     I_p = m_p*(0.09^2+Ls(step)^2)/12 + 0.00007+0.07*L_wp*L_wp; %摆杆转动惯量 
-% 
-%     m_b = (main_body.mass + load.mass)/2; %车身质量 
-%     I_b = m_b*((main_body.length/1000)^2+(main_body.width/1000)^2)/12; %车体转动惯量
-% 
-% 
-%     theta = 0.0;
-%     d_theta = 0;
-%     phi = 0;
-%     d_phi = 0;
-%     g = 9.71;
-% 
-% 
-%     A = double(subs(A_sym));
-%     B = double(subs(B_sym));
-% 
-%     [Ad ,Bd] = c2d(A, B, 0.001);
-% 
-%     %[x, dx, phi, dphi, theta, dtheta]                 
-%     Q = diag([1, 0.5, 51, 0.5, 0.51, 0.01]);
-%     %[T_w, T_p]
-%     R = diag([1, 0.25]);
-% 
-%     T_count = 0.001;
-% 
-%     Ks(:, :,step) = lqrd(A,B,Q,R,T_count);  
-%     if Ls(step) == 0.25
-%         K_test = lqrd(A,B,Q,R,T_count)  
-%     end
-% end
-% 
-% K=sym('K',[2 6]);
-% syms L0;
-% count =  1;
-% for x=1:2
-%     for y=1:6
-%         p=vpa(polyfit(Ls,reshape(Ks(x,y,:),1,length(Ls)),3),8);
-%         K(x,y)=p(1)*L0^3+p(2)*L0^2+p(3)*L0+p(4);
-%         subplot(2,6,count);
-%         fplot(K(x,y));
-%         count = count+1;
-%         hold on;
-%     end
-% end
+%%
+%LQR calculate
+
+%the variable of state
+syms theta d_theta d2_theta;
+syms x     d_x     d2_x;
+syms phi   d_phi   d2_phi;
+syms T_w   d_T_w   d2_T_w;
+syms T_p   d_T_p   d2_T_p;
+
+%the variable of constrain force
+syms N_wp P_wp N_pb P_pb f;
+
+%the constant which is determined by the mechanical structrue
+syms R_w L_wp L_pb L_c;
+syms m_w m_p  m_b; 
+syms I_w I_p  I_b;
+syms g;
+
+N_pb = m_b * (d2_x + (L_wp + L_pb) * d_theta^2 * sin(theta) - ...
+              (L_wp + L_pb) * d2_theta * cos(theta)... 
+              + L_c * d_phi^2 *sin(phi)...
+              - L_c * d2_phi *cos(phi));
+
+P_pb = m_b * (g - (L_wp + L_pb) * d_theta^2 * cos(theta)...
+              - (L_wp + L_pb) * d2_theta * sin(theta)...
+              -L_c * d_phi^2 * cos(phi)...
+              -L_c * d2_phi * sin(phi));
+
+N_wp = m_p * (d2_x + L_wp * d_theta^2 * sin(theta)...
+              - L_wp * d2_theta * cos(theta)) + N_pb;
+
+P_wp = m_p * (g - L_wp * d_theta^2 * cos(theta)...
+                - L_wp * d2_theta * sin(theta)) + P_pb;
+
+eq1 = d2_x == (-T_w - N_wp * R_w) / (I_w / R_w + m_w * R_w);
+eq2 = I_p * d2_theta == (P_wp * L_wp + P_pb * L_pb) * sin(theta)...
+                        + (N_wp * L_wp + N_pb * L_pb) * cos(theta)...
+                        - T_w + T_p;
+eq3 = I_b * d2_phi ==   P_pb * L_c * sin(phi)...
+                     + N_pb * L_c * cos(phi)...
+                     - T_p;                        
+
+model_solve = solve([eq1 eq2 eq3], [d2_theta, d2_x, d2_phi]);
+X = [x, d_x, phi, d_phi, theta, d_theta].';
+dX = [d_x,     simplify(model_solve.d2_x),   ...
+      d_phi,   simplify(model_solve.d2_phi), ...
+      d_theta, simplify(model_solve.d2_theta)].';
+
+
+U = [T_w T_p].';
+
+A_sym = jacobian(dX,X);
+B_sym = jacobian(dX,U);
+
+Ls = 0.12:0.01:0.38;
+Ks = zeros(2, 6, length(Ls));
+
+for step = 1:length(Ls)
+%变量
+    R_w = wheel.radius/1000; %车轮的半径
+    m_w = wheel.mass; %驱动轮转子质量
+    I_w = m_w*R_w^2/2;%m_w*R^2/2; %驱动轮转动惯量 0.00104 0.0004656
+    L_c = body2jonit_length/1000; %车体质心到关节中点（用于计算）
+    m_p = (big_rod.mass + little_rod.mass)*2; %摆杆质量
+    L_pb = Ls(step)/2; %摆杆中心到驱动关节
+    L_wp = Ls(step)/2; %摆杆中心到驱动轮
+    I_p = m_p*(0.09^2+Ls(step)^2)/12 + 0.00007+0.07*L_wp*L_wp; %摆杆转动惯量 
+
+    m_b = (main_body.mass + load.mass)/2; %车身质量 
+    I_b = m_b*((main_body.length/1000)^2+(main_body.width/1000)^2)/12; %车体转动惯量
+
+
+    theta = 0.0;
+    d_theta = 0;
+    phi = 0;
+    d_phi = 0;
+    g = 9.71;
+
+
+    A = double(subs(A_sym));
+    B = double(subs(B_sym));
+
+    [Ad ,Bd] = c2d(A, B, 0.001);
+
+    %[x, dx, phi, dphi, theta, dtheta]                 
+    Q = diag([1, 0.5, 51, 0.5, 0.51, 0.01]);
+    %[T_w, T_p]
+    R = diag([1, 0.25]);
+
+    T_count = 0.001;
+
+    Ks(:, :,step) = lqrd(A,B,Q,R,T_count);  
+    if Ls(step) == 0.25
+        K_test = lqrd(A,B,Q,R,T_count)  
+    end
+end
+
+K=sym('K',[2 6]);
+syms L0;
+count =  1;
+for x=1:2
+    for y=1:6
+        p=vpa(polyfit(Ls,reshape(Ks(x,y,:),1,length(Ls)),3),8);
+        K(x,y)=p(1)*L0^3+p(2)*L0^2+p(3)*L0+p(4);
+        subplot(2,6,count);
+        fplot(K(x,y));
+        count = count+1;
+        hold on;
+    end
+end
 
 %%
     %VMC 
 
-my_VMC = VMC(big_rod.length, big_rod.length, ...
-            little_rod.length, little_rod.length, ...
-            2 * motor.postion_x);
+my_VMC = VMC(2 * motor.postion_x,big_rod.length, big_rod.length, ...
+            little_rod.length, little_rod.length);
 
-
-solver = kinematic_solver(big_rod.length, big_rod.length, ...
-            little_rod.length, little_rod.length, ...
-            2 * motor.postion_x);
-
-a = solver.forward(2, 1);
-my_VMC.transform(2, 1, a.x, a.y, [1;1])
+% ret = my_VMC.transform(pi/3, 2*pi/3, pi/3, pi/3, [100,0].');
+% ret.F
