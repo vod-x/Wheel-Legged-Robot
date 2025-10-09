@@ -69,7 +69,7 @@ classdef VMC < handle
             obj.M = simplify(obj.J.'*obj.R*obj.N);             
         end
 
-        function ret = transform(obj, theta1, theta2, d_theta1, d_theta2, T)
+        function ret = transform(obj, theta1, theta2, d_theta1, d_theta2, F)
             j5.x = vpa(subs(obj.j5.x, obj.theta1, theta1));
             j5.y = vpa(subs(obj.j5.y, obj.theta1, theta1));
             j3.x = vpa(subs(obj.j3.x, obj.theta2, theta2));
@@ -130,7 +130,7 @@ classdef VMC < handle
             [theta0, theta1, theta2, phi1, phi2, L]);
             
            
-            ret.F = vpa(M * T);
+            ret.T = vpa(M * F);
             ret.L = vpa(L);
             ret.dL = vpa(dL);
             ret.alpha = vpa(theta0);

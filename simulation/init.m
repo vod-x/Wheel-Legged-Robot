@@ -144,10 +144,10 @@ for x=1:2
     for y=1:6
         p=vpa(polyfit(Ls,reshape(Ks(x,y,:),1,length(Ls)),3),8);
         K(x,y)=p(1)*L0^3+p(2)*L0^2+p(3)*L0+p(4);
-        subplot(2,6,count);
-        fplot(K(x,y));
-        count = count+1;
-        hold on;
+        % subplot(2,6,count);
+        % fplot(K(x,y));
+        % hold on;
+        count = count+1;        
     end
 end
 
@@ -157,5 +157,15 @@ end
 my_VMC = VMC(2 * motor.postion_x,big_rod.length, big_rod.length, ...
             little_rod.length, little_rod.length);
 
-% ret = my_VMC.transform(pi/3, 2*pi/3, pi/3, pi/3, [100,0].');
-% ret.F
+syms theta1 theta2 d_theta1 d_theta2 F
+% VMC_calc = my_VMC.transform(theta1, theta2, d_theta1, d_theta2, F);
+% vmc_t = @(theta1, theta2, d_theta1, d_theta2, F)my_VMC.transform(theta1, theta2, d_theta1, d_theta2, F);
+% syms theta1 theta2 d_theta1 d_theta2 F;
+% matlabFunction(vmc_t, 'Vars', [theta1, theta2, d_theta1, d_theta2, F]);
+
+
+% subs(K,L0,ret.L) * [100,0,0.1,0,0,0].'
+ret1 = my_VMC.transform(pi/2, pi/2, 0, 0, [100,0].')
+my_VMC_calc = @(theta1, theta2, d_theta1, d_theta2, F)VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000),theta1, theta2, d_theta1, d_theta2, F)
+% [L, d_L , alpha, d_alpha, T] = VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000), pi/2, pi/2, 0, 0, [100,0].')
+[L, d_L , alpha, d_alpha, T] = my_VMC_calc(pi/2, pi/2, 0, 0, [100,0].')
