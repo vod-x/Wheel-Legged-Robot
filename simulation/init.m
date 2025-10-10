@@ -2,11 +2,16 @@ clear;
 close all;
 %%
 %init the physical properties of the model
-initial_height = 800;
+initial_height = 530;
+
+% main_body.length = 487;
+% main_body.width = 429;
+% main_body.hight = 300;
+% main_body.mass = 13;
 
 main_body.length = 487;
 main_body.width = 429;
-main_body.hight = 300;
+main_body.hight = 150;
 main_body.mass = 13;
 
 load.length = 200;
@@ -125,9 +130,9 @@ for step = 1:length(Ls)
     [Ad ,Bd] = c2d(A, B, 0.001);
 
     %[x, dx, phi, dphi, theta, dtheta]                 
-    Q = diag([1, 0.5, 51, 0.5, 0.51, 0.01]);
+    Q = diag([1, 0.5, 100, 0.5, 0.51, 0.01]);
     %[T_w, T_p]
-    R = diag([1, 0.25]);
+    R = diag([0.1, 0.01]);
 
     T_count = 0.001;
 
@@ -165,7 +170,8 @@ syms theta1 theta2 d_theta1 d_theta2 F
 
 
 % subs(K,L0,ret.L) * [100,0,0.1,0,0,0].'
-ret1 = my_VMC.transform(pi/2, pi/2, 0, 0, [100,0].')
-my_VMC_calc = @(theta1, theta2, d_theta1, d_theta2, F)VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000),theta1, theta2, d_theta1, d_theta2, F)
+ret1 = my_VMC.transform(pi/2, pi/2, 0, 0, [100,0].');
+my_VMC_calc = @(theta1, theta2, d_theta1, d_theta2, F)VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000),theta1, theta2, d_theta1, d_theta2, F);
 % [L, d_L , alpha, d_alpha, T] = VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000), pi/2, pi/2, 0, 0, [100,0].')
-[L, d_L , alpha, d_alpha, T] = my_VMC_calc(pi/2, pi/2, 0, 0, [100,0].')
+[L, d_L , alpha, d_alpha, T] = my_VMC_calc(pi/2, pi/2, 0, 0, [100,0].');
+matlabFunction(K, 'File', 'LQR_calc','Vars', L0);

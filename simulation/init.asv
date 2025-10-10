@@ -168,4 +168,5 @@ syms theta1 theta2 d_theta1 d_theta2 F
 ret1 = my_VMC.transform(pi/2, pi/2, 0, 0, [100,0].')
 my_VMC_calc = @(theta1, theta2, d_theta1, d_theta2, F)VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000),theta1, theta2, d_theta1, d_theta2, F)
 % [L, d_L , alpha, d_alpha, T] = VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000), pi/2, pi/2, 0, 0, [100,0].')
-my_VMC_calc(pi/2, pi/2, 0, 0, [100,0].')
+[L, d_L , alpha, d_alpha, T] = my_VMC_calc(pi/2, pi/2, 0, 0, [100,0].')
+matlabFunction(vmc_t, 'Vars', [theta1, theta2, d_theta1, d_theta2, F]);
