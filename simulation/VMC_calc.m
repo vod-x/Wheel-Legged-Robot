@@ -14,13 +14,14 @@ c = (lr * lr) - (lr * lr) - (p * p)...
     - (q * q) - (2 * q * lr);
 z1 = (-b + sqrt(b * b - 4 * a * c)) / (2  * a);
 z2 = (-b - sqrt(b * b - 4 * a * c)) / (2  * a);
-z1 = mod(z1, 2*pi);
-z2 = mod(z2, 2*pi);
-if 2 * atan(z1) > pi/2
-    phi1 = 2 * atan(z1);
-else
-    phi1 = 2 * atan(z2);
-end
+% z1 = mod(z1, 2*pi);
+% z2 = mod(z2, 2*pi);
+% if 2 * atan(z1) > pi/2  
+%     phi1 = 2 * atan(z1);
+% else
+%     phi1 = 2 * atan(z2);
+% end
+    phi1 = 2 * atan2((-b + sqrt(b * b - 4 * a * c)) , (2  * a));
 
 p = j3.y - j5.y;
 q = j3.x - j5.x;
@@ -31,13 +32,22 @@ c = (lr * lr) - (lr * lr) - (p * p)...
     - (q * q) - (2 * q * lr);
 z1 = (-b + sqrt(b * b - 4 * a * c)) / (2  * a);
 z2 = (-b - sqrt(b * b - 4 * a * c)) / (2  * a);
-z1 = mod(z1, 2*pi);
-z2 = mod(z2, 2*pi);
-if 2 * atan(z1) < pi/2
-    phi2 = 2 * atan(z1);
-else
-    phi2 = 2 * atan(z2);
-end
+% z1 = mod(z1, 2*pi);
+% z2 = mod(z2, 2*pi);
+% if 2 * atan(z1) < pi/2
+%     phi2 = 2 * atan(z1);
+% else
+%     phi2 = 2 * atan(z2);
+% end
+    phi2 = 2 * atan2((-b - sqrt(b * b - 4 * a * c)) , (2  * a));
+
+% A0 = 2 * lr * (j3.x - j5.x);
+% B0 = 2 * lr * (j3.y - j5.y);
+% C0 = (j3.x - j5.x)^2 + (j3.y - j5.y)^2;
+% phi1 = 2 * atan((B0 + sqrt(A0 * A0 + B0 * B0 - C0 * C0)) / (A0 + C0));
+% A0 = 2 * lr * (j5.x - j3.x);
+% B0 = 2 * lr * (j5.y - j3.y);
+% phi2 = 2 * atan((B0 + sqrt(A0 * A0 + B0 * B0 - C0 * C0)) / (A0 + C0));
 
 j4.x = (201*cos(phi1))/1000 + (39*cos(theta1))/250;
 j4.y = (201*sin(phi1))/1000 + (39*sin(theta1))/250;
@@ -49,7 +59,7 @@ d_L = ((j4.x + (interval / 2)) * j4.dx + j4.y * j4.dy) / L;
 alpha = atan2(j4.y, (j4.x + interval / 2));
 d_alpha = (j4.dy * (j4.x + interval / 2) - j4.y * j4.dx) / L;
 
-M = [-(39*sin(alpha + phi2)*sin(phi1 - theta1))/(250*sin(phi1 - phi2)),  (39*cos(alpha + phi2)*sin(phi1 - theta1))/(250*L*sin(phi1 - phi2));...
-    (39*sin(alpha + phi1)*sin(phi2 - theta2))/(250*sin(phi1 - phi2)), -(39*cos(alpha + phi1)*sin(phi2 - theta2))/(250*L*sin(phi1 - phi2))];
+M = [(39*sin(alpha - phi2)*sin(phi1 - theta1))/(250*sin(phi1 - phi2)),  -(39*cos(alpha - phi2)*sin(phi1 - theta1))/(250*L*sin(phi1 - phi2));...
+    -(39*sin(alpha - phi1)*sin(phi2 - theta2))/(250*sin(phi1 - phi2)), (39*cos(alpha - phi1)*sin(phi2 - theta2))/(250*L*sin(phi1 - phi2))];
 
 T = M * F;

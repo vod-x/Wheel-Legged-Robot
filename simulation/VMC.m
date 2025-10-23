@@ -63,7 +63,7 @@ classdef VMC < handle
             obj.J = simplify(jacobian(d_X, d_Q));
 
             obj.R = [ cos(theta0), sin(theta0);...
-                     -sin(theta0), cos(theta0) ];
+                     sin(theta0), -cos(theta0) ];
             obj.N = [1, 0;...
                      0, 1/L];
             obj.M = simplify(obj.J.'*obj.R*obj.N);             

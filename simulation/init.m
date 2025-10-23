@@ -2,17 +2,17 @@ clear;
 close all;
 %%
 %init the physical properties of the model
-initial_height = 530;
+initial_height = 600;
 
 % main_body.length = 487;
 % main_body.width = 429;
 % main_body.hight = 300;
 % main_body.mass = 13;
 
-main_body.length = 487;
+main_body.length = 387;
 main_body.width = 429;
 main_body.hight = 150;
-main_body.mass = 13;
+main_body.mass =6;
 
 load.length = 200;
 load.width = 200;
@@ -23,7 +23,7 @@ load.position_y = 0;
 motor.radius = 44.5;
 motor.length = 55;
 %motor is assembled in the main body and its mass was included.
-motor.mass = 0.01;
+motor.mass = 0.5;
 motor.postion_x = 66;
 motor.postion_y = 187;
 motor.max_angle = -192;
@@ -43,7 +43,7 @@ wheel.radius = 72;
 wheel.length = 28;
 wheel.mass = 1;
 
-body2jonit_length = 160;
+body2jonit_length = 60;
 %%
 %LQR calculate
 
@@ -63,7 +63,7 @@ syms m_w m_p  m_b;
 syms I_w I_p  I_b;
 syms g;
 
-N_pb = m_b * (d2_x + (L_wp + L_pb) * d_theta^2 * sin(theta) - ...
+N_pb = m_b * (d2_x+ (L_wp + L_pb) * d_theta^2 * sin(theta) - ...
               (L_wp + L_pb) * d2_theta * cos(theta)... 
               + L_c * d_phi^2 *sin(phi)...
               - L_c * d2_phi *cos(phi));
@@ -89,6 +89,9 @@ eq3 = I_b * d2_phi ==   P_pb * L_c * sin(phi)...
 
 model_solve = solve([eq1 eq2 eq3], [d2_theta, d2_x, d2_phi]);
 X = [x, d_x, phi, d_phi, theta, d_theta].';
+% dX = [d_x,     simplify(model_solve.d2_x),   ...
+%       d_phi,   simplify(model_solve.d2_phi), ...
+%       d_theta, simplify(model_solve.d2_theta)].';
 dX = [d_x,     simplify(model_solve.d2_x),   ...
       d_phi,   simplify(model_solve.d2_phi), ...
       d_theta, simplify(model_solve.d2_theta)].';
@@ -99,7 +102,7 @@ U = [T_w T_p].';
 A_sym = jacobian(dX,X);
 B_sym = jacobian(dX,U);
 
-Ls = 0.12:0.01:0.38;
+Ls = 0.1:0.01:0.38;
 Ks = zeros(2, 6, length(Ls));
 
 for step = 1:length(Ls)
@@ -111,18 +114,39 @@ for step = 1:length(Ls)
     m_p = (big_rod.mass + little_rod.mass)*2; %摆杆质量
     L_pb = Ls(step)/2; %摆杆中心到驱动关节
     L_wp = Ls(step)/2; %摆杆中心到驱动轮
-    I_p = m_p*(0.09^2+Ls(step)^2)/12 + 0.00007+0.07*L_wp*L_wp; %摆杆转动惯量 
+    I_p = m_p*Ls(step)^2/12; %摆杆转动惯量 
 
-    m_b = (main_body.mass + load.mass)/2; %车身质量 
-    I_b = m_b*((main_body.length/1000)^2+(main_body.width/1000)^2)/12; %车体转动惯量
+    m_b = (main_body.mass); %车身质量 
+    I_b = m_b*((main_body.length/1000)^2+(main_body.hight/1000)^2)/12; %车体转动惯量
 
+
+
+%    wh_Leg = 0.09; %摆杆宽度
+%     % Ls(step) = 0.4;%摆杆长度
+%     m_body = 6.0; %车身质量
+%     wh_body = 0.2;%上车体高度
+%     L_body = 0.37; %上车体长度
+    
+%     %变量
+%     R_w = 0.075; %车轮的半径
+%     m_w = 1.15; %驱动轮转子质量
+%     I_w = 0.0015056;%m_w*R^2/2; %驱动轮转动惯量 0.00104 0.0004656
+%     L_c = -0.01; %车体质心到关节中点（用于计算）
+%     m_p = 1.2; %摆杆质量
+%     L_pb = Ls(step)*(Ls(step)/0.38)*0.4; %摆杆中心到驱动关节
+%     L_wp = Ls(step) - L_pb; %摆杆中心到驱动轮
+%     I_p = m_p*(wh_Leg^2+Ls(step)^2)/12 + 0.00007+0.07*L_wp*L_wp; %摆杆转动惯量 
+
+%     m_b = m_body/2; %车身质量 
+%     I_b = m_b*(wh_body^2+L_body^2)/12; %车体转动惯量
+    
 
     theta = 0.0;
     d_theta = 0;
     phi = 0;
     d_phi = 0;
     g = 9.71;
-
+    d_x=0;
 
     A = double(subs(A_sym));
     B = double(subs(B_sym));
@@ -130,16 +154,19 @@ for step = 1:length(Ls)
     [Ad ,Bd] = c2d(A, B, 0.001);
 
     %[x, dx, phi, dphi, theta, dtheta]                 
-    Q = diag([1, 0.5, 100, 0.5, 0.51, 0.01]);
+    Q = diag([0.002, 0.015, 5000, 1, 1, 1]);
+    % Q = diag([0.1, 0.01, 5000, 1, 1, 1]);
+    
     %[T_w, T_p]
-    R = diag([0.1, 0.01]);
+    R = diag([0.25, 0.25]);
 
     T_count = 0.001;
 
-    Ks(:, :,step) = lqrd(A,B,Q,R,T_count);  
-    if Ls(step) == 0.25
-        K_test = lqrd(A,B,Q,R,T_count)  
-    end
+    % Ks(:, :,step) = lqr(A,B,Q,R);      
+    Ks(:, :,step) = dlqr(Ad,Bd,Q,R);  
+    % if step == 5
+    %     K_test = lqrd(A,B,Q,R,T_count)  
+    % end
 end
 
 K=sym('K',[2 6]);
@@ -149,12 +176,15 @@ for x=1:2
     for y=1:6
         p=vpa(polyfit(Ls,reshape(Ks(x,y,:),1,length(Ls)),3),8);
         K(x,y)=p(1)*L0^3+p(2)*L0^2+p(3)*L0+p(4);
+
         % subplot(2,6,count);
         % fplot(K(x,y));
         % hold on;
         count = count+1;        
     end
 end
+        % K(1,1)=-K(1,1);
+        % K(1,2)=-K(1,2);
 
 %%
     %VMC 
@@ -175,3 +205,29 @@ my_VMC_calc = @(theta1, theta2, d_theta1, d_theta2, F)VMC_calc((2 * motor.postio
 % [L, d_L , alpha, d_alpha, T] = VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000), pi/2, pi/2, 0, 0, [100,0].')
 [L, d_L , alpha, d_alpha, T] = my_VMC_calc(pi/2, pi/2, 0, 0, [100,0].');
 matlabFunction(K, 'File', 'LQR_calc','Vars', L0);
+-LQR_calc(0.25)
+%%
+LQR_Tw_limit = 10;
+LQR_Tp_limit = 30;
+PID_F_limit = 200;
+
+Leg_pid.Kp = 8000;
+Leg_pid.Ki = 0;
+Leg_pid.Kd = 400;
+
+length_change_time = [0;   1;   1; 5];
+left_leg_length =    [0.25; 0.25; 0.25; 0.25];
+right_leg_length =   [0.25; 0.25; 0.25; 0.25];
+
+left_leg_length_set = [length_change_time, left_leg_length];
+right_leg_length_set = [length_change_time, right_leg_length];
+
+rod_limit = 130;
+enable_time = 0.2;
+v_d_time = [0;   2;   2; 14];
+v_d_set =    [5; 5; 0; 0];
+v_d= [v_d_time, v_d_set];
+% v_d= [0, 0];
+
+x_d = 0;
+disp("变量已更新")
