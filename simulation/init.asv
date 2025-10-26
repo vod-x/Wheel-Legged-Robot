@@ -12,7 +12,7 @@ initial_height = 600;
 main_body.length = 387;
 main_body.width = 429;
 main_body.hight = 150;
-main_body.mass = 13;
+main_body.mass =6;
 
 load.length = 200;
 load.width = 200;
@@ -23,7 +23,7 @@ load.position_y = 0;
 motor.radius = 44.5;
 motor.length = 55;
 %motor is assembled in the main body and its mass was included.
-motor.mass = 0.01;
+motor.mass = 0.5;
 motor.postion_x = 66;
 motor.postion_y = 187;
 motor.max_angle = -192;
@@ -154,9 +154,11 @@ for step = 1:length(Ls)
     [Ad ,Bd] = c2d(A, B, 0.001);
 
     %[x, dx, phi, dphi, theta, dtheta]                 
-    Q = diag([0.1, 10, 5000, 1, 10, 1]);
+    Q = diag([0.002, 0.015, 5000, 1, 1, 1]);
+    % Q = diag([0.1, 0.01, 5000, 1, 1, 1]);
+    
     %[T_w, T_p]
-    R = diag([1, 0.5]);
+    R = diag([0.25, 0.25]);
 
     T_count = 0.001;
 
@@ -181,8 +183,8 @@ for x=1:2
         count = count+1;        
     end
 end
-        K(1,1)=-K(1,1);
-        K(1,2)=-K(1,2);
+        % K(1,1)=-K(1,1);
+        % K(1,2)=-K(1,2);
 
 %%
     %VMC 
@@ -213,13 +215,29 @@ Leg_pid.Kp = 8000;
 Leg_pid.Ki = 0;
 Leg_pid.Kd = 400;
 
-length_change_time = [0;   1;   1; 5];
-left_leg_length =    [0.15; 0.15; 0.15; 0.15];
-right_leg_length =   [0.15; 0.15; 0.15; 0.15];
 
+time1 = 1;
+length1 = 0.25;
+time2 = 2;
+length2 = 0.15;
+time3 = 3;
+length3 = 0.25;
+initial_length = 0.25;
+final_length = 0.25;
+
+length_change_time = [0;   time1;   time1; time2; time2; time3; time3; 10];
+left_leg_length =    [initial_length;length1; length1; length2; length2;length3;length3;final_length];
+right_leg_length =   [initial_length;length1; length1; length2; length2;length3;length3;final_length];
 left_leg_length_set = [length_change_time, left_leg_length];
 right_leg_length_set = [length_change_time, right_leg_length];
 
 rod_limit = 130;
-enable_time = 0.2;
+enable_time = 0.3;
+v_d_time = [0;   2;   2; 14];
+v_d_set =    [0; 0; 0; 0];
+v_d= [v_d_time, v_d_set];
+% v_d= [0, 0];
+x_disturbing = 0;
+revolute_disturbing = 0;
+x_d = 0;
 disp("变量已更新")

@@ -12,7 +12,7 @@ initial_height = 600;
 main_body.length = 387;
 main_body.width = 429;
 main_body.hight = 150;
-main_body.mass =6;
+main_body.mass =2;
 
 load.length = 200;
 load.width = 200;
@@ -154,7 +154,7 @@ for step = 1:length(Ls)
     [Ad ,Bd] = c2d(A, B, 0.001);
 
     %[x, dx, phi, dphi, theta, dtheta]                 
-    Q = diag([0.002, 0.015, 5000, 1, 1, 1]);
+    Q = diag([0.002, 0.015, 5000, 1, 5, 5]);
     % Q = diag([0.1, 0.01, 5000, 1, 1, 1]);
     
     %[T_w, T_p]
@@ -205,29 +205,55 @@ my_VMC_calc = @(theta1, theta2, d_theta1, d_theta2, F)VMC_calc((2 * motor.postio
 % [L, d_L , alpha, d_alpha, T] = VMC_calc((2 * motor.postion_x /1000), (little_rod.length/1000), pi/2, pi/2, 0, 0, [100,0].')
 [L, d_L , alpha, d_alpha, T] = my_VMC_calc(pi/2, pi/2, 0, 0, [100,0].');
 matlabFunction(K, 'File', 'LQR_calc','Vars', L0);
+aerial_posture_K = sym('aerial_posture_K',[2 6]);
+
+aerial_posture_K(1,1) = 0;
+aerial_posture_K(1,2) = 0;
+aerial_posture_K(1,3) = 0;
+aerial_posture_K(1,4) = 0;
+aerial_posture_K(1,5) = 0;
+aerial_posture_K(1,6) = 0;
+aerial_posture_K(2,1) = 0;
+aerial_posture_K(2,2) = 0;
+aerial_posture_K(2,3) = 0;
+aerial_posture_K(2,4) = 0;
+aerial_posture_K(2,5) = K(2,5);
+aerial_posture_K(2,6) = K(2,6);
+matlabFunction(aerial_posture_K, 'File', 'aerial_posture_control','Vars', L0);
 -LQR_calc(0.25)
 %%
 LQR_Tw_limit = 10;
 LQR_Tp_limit = 30;
-PID_F_limit = 200;
+PID_F_limit = 400;
 
-Leg_pid.Kp = 8000;
+Leg_pid.Kp = 10000;
 Leg_pid.Ki = 0;
 Leg_pid.Kd = 400;
 
-length_change_time = [0;   1;   1; 5];
-left_leg_length =    [0.25; 0.25; 0.25; 0.25];
-right_leg_length =   [0.25; 0.25; 0.25; 0.25];
 
+time1 = 1;
+length1 = 0.25;
+time2 = 2;
+length2 = 0.15;
+time3 = 2.05;
+length3 = 0.25;
+initial_length = 0.25;
+final_length = 0.25;
+
+length_change_time = [0;   time1;   time1; time2; time2; time3; time3; 10];
+left_leg_length =    [initial_length;length1; length1; length2; length2;length3;length3;final_length];
+right_leg_length =   [initial_length;length1; length1; length2; length2;length3;length3;final_length];
 left_leg_length_set = [length_change_time, left_leg_length];
 right_leg_length_set = [length_change_time, right_leg_length];
 
 rod_limit = 130;
-enable_time = 0.2;
-v_d_time = [0;   2;   2; 14];
-v_d_set =    [5; 5; 0; 0];
+enable_time = 0.3;
+v_d_time = [0;   3;   3; 14];
+v_d_set =    [1; 1; 0; 0];
 v_d= [v_d_time, v_d_set];
 % v_d= [0, 0];
-
+x_disturbing = 0;
+revolute_disturbing = 0;
+support_force = 40;
 x_d = 0;
 disp("变量已更新")
