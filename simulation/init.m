@@ -1,8 +1,15 @@
-%% Clear the workspace and close all figures, set which modules to run.
+%% Clear the workspace and close all figures.
 clear;
 close all;
+
+%% Set which modules to run.
 % set to false to disable visualization
 visualization = true; 
+
+%% Add paths
+if visualization
+    addpath('./kinematic_solver_visualization');
+end
 
 %% Init the physical properties of the model.
 
@@ -10,20 +17,23 @@ visualization = true;
 % unit of angle is rad.
 
 % the length of big rod
-br = 2 ;
+br = 0.09461 ;
 % the length of little rod
-lr = 3;
+lr = 0.11253;
 % the length of extended big rod  
-ebr = 4;
+ebr = 0.11598;
+% ebr = 0;
 % the length of extended little rod
-elr = 5;
+elr = 0.06506;
+% elr = 0;
 % the interval between the two motors
 ivl = 0;
+% ivl = 0.03253;
 
 % syms br lr ebr elr ivl;
 % the maximum and minimum angle of mechanical limit
-max_mechanical_angle = -120 * pi / 180;
-min_mechanical_angle = -192 * pi / 180;
+max_mechanical_angle = 140 * pi / 180;
+min_mechanical_angle = 90 * pi / 180;
 % the maxium and minimun angle of the bias between the two rods
 [max_bias, min_bias] = ...
         bias_angle_calc(br, lr, max_mechanical_angle, min_mechanical_angle);
@@ -114,8 +124,9 @@ phi2eq4 = subs(phi2eq3, [cos(phi2), sin(phi2)], ...
                 [(1 - t2^2)/(1 + t2^2), (2*t2)/(1 + t2^2)]);
 t2sol = simplify(solve(phi2eq4, t2));
 
-phi1 = acos((1 - t1sol(2)^2)/(1 + t1sol(2)^2));
-phi2 = acos((1 - t2sol(1)^2)/(1 + t2sol(1)^2));
+
+phi1 = 2 * atan(t1sol(2));
+phi2 = 2 * atan(t2sol(1));
 
 % when the ebr and elr are not zero, the structure is serial, then calculate 
 % the position of j6 to j9
@@ -139,109 +150,14 @@ if ebr ~= 0 && elr ~= 0
     j9y = j4y * (ebr + br) / br;
 end
 
-
-
 if visualization
-    % initialize figure
-    figure;
-    set(gcf, 'Position', [100, 100, 800, 600]);
-    hold on;
-    grid on;
-    axis equal;
-    xlabel('X');
-    ylabel('Y');
-    set(gca, 'YDir', 'reverse');   
-    title('kinematic solver visualization');
+    % create the kinematic solver GUI object
+    GUI = kinematic_solver_GUI(j1x, j1y, j2x, j2y, j3x, j3y, j4x, j4y, j5x, j5y, j6x, j6y, j7x, j7y, j8x, j8y, j9x, j9y,...
+        phi0, phi1, phi2, lambda1, lambda2, max_bias, min_bias, br, lr, ebr, elr, ivl);
 
-    % initialize plot handles
-    h1 = plot([0, 0], [0, 0], 'k-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'k');
-    h2 = plot([0, 0], [0, 0], 'b-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'b');
-    h3 = plot([0, 0], [0, 0], 'r-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'r');
-    h4 = plot([0, 0], [0, 0], 'g-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'g');
-    h5 = plot([0, 0], [0, 0], 'm-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'm');
-
-    if ebr ~=0 && elr ~=0
-        h6 = plot([0, 0], [0, 0], 'c-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'c');
-        h7 = plot([0, 0], [0, 0], 'y-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'y');
-        h8 = plot([0, 0], [0, 0], 'k-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'k');
-        h9 = plot([0, 0], [0, 0], 'k-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'k');    
-        h10 = plot([0, 0], [0, 0], 'k-o', 'LineWidth', 2, 'MarkerSize', 8,...
-                                                        'MarkerFaceColor', 'k');                                                                                                                
-    end                                                        
-    t1 = text(0, 0, '  j3', 'VerticalAlignment', 'bottom', ...
-        'HorizontalAlignment', 'left', 'FontSize', 12, 'FontWeight', ...
-        'bold', 'Color', 'k');
-    t2 = text(0, 0, '  j5', 'VerticalAlignment', 'bottom', ...
-        'HorizontalAlignment', 'left', 'FontSize', 12, 'FontWeight', ...
-        'bold', 'Color', 'k');
-
-    % animation parameters
-    frames = 100;     %the number of frames
-    ivl_time = 0.02;  %the time interval between two frames
-
-    for i = 1:frames
-
-        % calculate angles
-        a1 = deg2rad(30 + (150 - 70) * (i - 1) / (frames - 1));
-        a2 = deg2rad(150 - (150 - 120) * (i - 1) / (frames - 1));
-
-        % calculate joint positions
-        pj1x = ivl/2;
-        pj1y = 0;
-        pj2x = -ivl/2;
-        pj2y = 0;
-        pj5x = subs(j5x, [j1x, j1y, theta1], [pj1x, pj1y, a1]);
-        pj5y = subs(j5y, [j1x, j1y, theta1], [pj1x, pj1y, a1]);
-        pj3x = subs(j3x, [j1x, j1y, j2x, j2y, theta2], [pj1x, pj1y, pj2x, pj2y, a2]);
-        pj3y = subs(j3y, [j1x, j1y, j2x, j2y, theta2], [pj1x, pj1y, pj2x, pj2y, a2]);
-        pj4x1 = pj5x + lr * cos(double(subs(phi1, [theta1, theta2], [a1, a2])));
-        pj4y1 = pj5y + lr * sin(double(subs(phi1, [theta1, theta2], [a1, a2])));
-        pj4x2 = pj3x + lr * cos(double(subs(phi2, [theta1, theta2], [a1, a2])));
-        pj4y2 = pj3y + lr * sin(double(subs(phi2, [theta1, theta2], [a1, a2])));
-
-        if ebr ~=0 && elr ~=0
-            pj6x = pj5x + elr * cos(-double(subs(lambda1, [theta1, theta2], [a1, a2])));
-            pj6y = pj5y + elr * sin(-double(subs(lambda1, [theta1, theta2], [a1, a2])));
-            pj7x = pj6x + ebr * cos(double(subs(lambda2, [theta1, theta2], [a1, a2])));
-            pj7y = pj6y + ebr * sin(double(subs(lambda2, [theta1, theta2], [a1, a2])));
-            pj8x = pj5x + ebr * cos(double(subs(lambda2, [theta1, theta2], [a1, a2])));
-            pj8y = pj5y + ebr * sin(double(subs(lambda2, [theta1, theta2], [a1, a2])));
-            pj9x = pj4x1 * (ebr + br) / br;
-            pj9y = pj4y1 * (ebr + br) / br;        
-        end
-        % update plots
-        set(h1, 'XData', [pj1x, pj2x], 'YData', [pj1y, pj2y]);
-        set(h2, 'XData', [pj2x, pj3x], 'YData', [pj2y, pj3y]);
-        set(h3, 'XData', [pj3x, pj4x1], 'YData', [pj3y, pj4y1]);
-        set(h4, 'XData', [pj5x, pj4x1], 'YData', [pj5y, pj4y1]);        
-        set(h5, 'XData', [pj1x, pj5x], 'YData', [pj1y, pj5y]);
-        
-        if ebr ~=0 && elr ~=0
-            set(h6, 'XData', [pj5x, pj6x], 'YData', [pj5y, pj6y]);
-            set(h7, 'XData', [pj6x, pj7x], 'YData', [pj6y, pj7y]);
-            set(h8, 'XData', [pj5x, pj8x], 'YData', [pj5y, pj8y]);
-            set(h9, 'XData', [pj7x, pj8x], 'YData', [pj7y, pj8y]);
-            set(h10, 'XData', [pj8x, pj9x], 'YData', [pj8y, pj9y]);        
-        end
-        % add labels
-        set(t1, 'Position', [double(pj3x), double(pj3y)], 'String', '  j3');
-        set(t2, 'Position', [double(pj5x), double(pj5y)], 'String', '  j5');
-
-        drawnow
-        pause(ivl_time);
-    end
-
-         
 end
+
+
 
 % %%
 % %init the physical properties of the model

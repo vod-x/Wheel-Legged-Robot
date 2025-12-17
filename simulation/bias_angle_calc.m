@@ -1,7 +1,7 @@
 function [max_bias, min_bias] = bias_angle_calc(br, lr, max_angle, min_angle)
     % calculate max bias
-    l = sqrt(br*br + lr*lr -2*br*lr*cos(min_angle));
-    max_bias = asin(lr / l * sin(min_angle));
+    l = sqrt(br*br + lr*lr -2*br*lr*cos(pi-max_angle));
+    max_bias = 2 * asin(lr / l * sin(pi-max_angle));
     % calculate min bias
-    l = sqrt(br*br + lr*lr - 2*br*lr*cos(max_angle));
-    min_bias = asin(lr / l * sin(max_angle));
+    l = sqrt(br*br + lr*lr - 2*br*lr*cos(pi-min_angle));
+    min_bias = 2 * asin(lr / l * sin(pi-min_angle));
