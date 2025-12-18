@@ -66,7 +66,7 @@ classdef kinematic_solver_GUI < handle
 
         function init_UI(obj)
             % create figure
-            obj.fig = uifigure('Name', 'kinematic_solver_GUI','Position', [100, 100, 1200, 800]);
+            obj.fig = figure('Name', 'kinematic_solver_GUI','Position', [100, 100, 1200, 800]);
             
             % create axes for drawing the mechanism
             obj.ax = axes('Parent', obj.fig, 'Position', [0.35 0.1 0.6 0.8]);
@@ -171,19 +171,19 @@ classdef kinematic_solver_GUI < handle
             pj2x = -obj.ivl/2;
             pj2y = 0;
         
-            syms j1x j1y j2x j2y theta1 theta2
+            syms j1x j1y j2x j2y j3x j3y j5x j5y theta1 theta2
 
             pj5x = double(subs(obj.oj5x, [j1x, j1y, theta1], [pj1x, pj1y, a1_val]));
             pj5y = double(subs(obj.oj5y, [j1x, j1y, theta1], [pj1x, pj1y, a1_val]));
             pj3x = double(subs(obj.oj3x, [j1x, j1y, j2x, j2y, theta2], [pj1x, pj1y, pj2x, pj2y, a1_val + a2_val]));
             pj3y = double(subs(obj.oj3y, [j1x, j1y, j2x, j2y, theta2], [pj1x, pj1y, pj2x, pj2y, a1_val + a2_val]));
         
-            phi1_val = double(subs(obj.ophi1, [theta1, theta2], [a1_val, a1_val + a2_val]));
+            phi1_val = double(subs(obj.ophi1, [theta1, theta2, j3x, j3y, j5x, j5y], [a1_val, a1_val + a2_val, pj3x, pj3y, pj5x, pj5y]));
             pj4x = pj5x + obj.lr * cos(phi1_val);
             pj4y = pj5y + obj.lr * sin(phi1_val);
 
-            lambda1_val = double(subs(obj.olambda1, [theta1, theta2], [a1_val, a1_val + a2_val]));
-            lambda2_val = double(subs(obj.olambda2, [theta1, theta2], [a1_val, a1_val + a2_val]));
+            lambda1_val = double(subs(obj.olambda1, [theta1, theta2, j3x, j3y, j5x, j5y], [a1_val, a1_val + a2_val, pj3x, pj3y, pj5x, pj5y]));
+            lambda2_val = double(subs(obj.olambda2, [theta1, theta2, j3x, j3y, j5x, j5y], [a1_val, a1_val + a2_val, pj3x, pj3y, pj5x, pj5y]));
             
             pj6x = pj5x + obj.elr * cos(-lambda1_val);
             pj6y = pj5y + obj.elr * sin(-lambda1_val);

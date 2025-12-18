@@ -3,34 +3,37 @@ clear;
 close all;
 
 %% Set which modules to run.
+
+% set to 1 to use syms variables, use numeric values otherwise
+use_syms = 0;
 % set to false to disable visualization
-visualization = true; 
+visualization = 1; 
 
 %% Add paths
-if visualization
-    addpath('./kinematic_solver_visualization');
-end
+
 
 %% Init the physical properties of the model.
 
 % The unit of length is m, the unit of mass is kg, the unit of time is s, the 
 % unit of angle is rad.
 
-% the length of big rod
-br = 0.09461 ;
-% the length of little rod
-lr = 0.11253;
-% the length of extended big rod  
-ebr = 0.11598;
-% ebr = 0;
-% the length of extended little rod
-elr = 0.06506;
-% elr = 0;
-% the interval between the two motors
-ivl = 0;
-% ivl = 0.03253;
+if use_syms
+    syms br lr ebr elr ivl zoom_factor
+else
+    br = 0.09461 ; % the length of big rod
+    lr = 0.11253; % the length of little rod
+    ebr = 0.11598; % the length of extended big rod  
+    % ebr = 0;
+    elr = 0.06506; % the length of extended little rod
+    % elr = 0;
+    ivl = 0; % the interval between the two motors
+    % ivl = 0.03253;
+    % when use seriel structure, the zoom factor of the end effector 
+    zoom_factor = (br+ebr)/(br); 
+end
 
-% syms br lr ebr elr ivl;
+% length of virtual leg
+syms L
 % the maximum and minimum angle of mechanical limit
 max_mechanical_angle = 140 * pi / 180;
 min_mechanical_angle = 90 * pi / 180;
@@ -60,21 +63,21 @@ min_mechanical_angle = 90 * pi / 180;
 %                 /
 %                /
 %               j9
-syms j1x j1y j2x j2y j3x j3y j4x j4y j5x j5y 
-syms j6x j6y j7x j7y j8x j8y j9x j9y 
+syms j1x(t) j1y(t) j2x(t) j2y(t) j3x(t) j3y(t) j4x(t) j4y(t) j5x(t) j5y(t)
+syms j6x(t) j6y(t) j7x(t) j7y(t) j8x(t) j8y(t) j9x(t) j9y(t)
 
 % The angle of joints, reclockwise is positive, 
 % d_ is the first derivative respect to time,
 % d2_ is the second derivative respect to time.
 
 % the angle between the direction of forward and j1 to j5, 
-syms theta1 d_theta1 d2_theta1;
+syms theta1(t) d_theta1 d2_theta1;
 % the angle between the direction of forward and j2 to j3, 
-syms theta2 d_theta2 d2_theta2;
+syms theta2(t) d_theta2 d2_theta2;
 % the angle between the direction of forward and j5 to j4
-syms phi1 d_phi1 d2_phi1;
+syms phi1(t) d_phi1 d2_phi1;
 % the angle between the direction of forward and j3 to j4
-syms phi2 d_phi2 d2_phi2;
+syms phi2(t) d_phi2 d2_phi2;
 
 % The velocity, acceleration, force and torque of end effector. 
 % In parallel structure, the joint is j4. In serial structure, the joint is j9. 
@@ -92,7 +95,8 @@ syms e_Fc e_Ft e_T;
 % The angle between ground and the end effector.
 syms beta d_beta d2_beta;
 
-%% Kinematic solver 
+
+
 
 j2x = j1x - ivl;
 j2y = j1y;
@@ -105,6 +109,44 @@ syms t1 t2;
 
 j4eq1 = j5x + lr * cos(phi1) == j3x + lr * cos(phi2);
 j4eq2 = j5y + lr * sin(phi1) == j3y + lr * sin(phi2);
+
+j4x = j5x + lr * cos(phi1);
+j4y = j5y + lr * sin(phi1);
+
+%% VMC
+pj4eq1 = subs(diff(j4eq1, t),...
+    [diff(j1x,t), diff(j1y,t),diff(theta1,t), diff(theta2,t), ...
+    diff(phi1, t), diff(phi2, t)], [0, 0, d_theta1, d_theta2, d_phi1, d_phi2]);
+pj4eq2 = subs(diff(j4eq2, t),...
+    [diff(j1x,t), diff(j1y,t),diff(theta1,t), diff(theta2,t), ...
+    diff(phi1, t), diff(phi2, t)], [0, 0, d_theta1, d_theta2, d_phi1, d_phi2]);
+d_thetasolve = solve([pj4eq1, pj4eq2], [d_phi1, d_phi2]);
+d_phi1 = simplify(d_thetasolve.d_phi1);
+d_phi2 = simplify(d_thetasolve.d_phi2);
+
+d_x = zoom_factor * subs(diff(j4x, t),...
+    [diff(j1x,t), diff(j1y,t),diff(theta1,t), diff(theta2,t), ...
+    diff(phi1, t), diff(phi2, t)], [0, 0, d_theta1, d_theta2, d_phi1, d_phi2]);
+d_y = zoom_factor * subs(diff(j4y, t),...
+    [diff(j1x,t), diff(j1y,t),diff(theta1,t), diff(theta2,t), ...
+    diff(phi1, t), diff(phi2, t)], [0, 0, d_theta1, d_theta2, d_phi1, d_phi2]);
+
+d_X = [d_x; d_y];
+d_q = [d_theta1; d_theta2];
+d_X = simplify(collect(d_X, d_q));
+% jacobin matrix
+J = simplify(jacobian(d_X, d_q));
+% rotation matrix 
+R = [-sin(alpha), cos(alpha);
+     -cos(alpha),  sin(alpha)];
+% zoom matrix
+Z = [0, 1/L;
+     1, 0];
+% VMC transformation matrix
+% [T1; T2] =T * [F; T]
+T = J.'* R * Z;
+
+%% Kinematic solver 
 
 % solve phi1
 phi1eq1 = isolate(j4eq1, cos(phi2));        
@@ -128,27 +170,25 @@ t2sol = simplify(solve(phi2eq4, t2));
 phi1 = 2 * atan(t1sol(2));
 phi2 = 2 * atan(t2sol(1));
 
-% when the ebr and elr are not zero, the structure is serial, then calculate 
-% the position of j6 to j9
-if ebr ~= 0 && elr ~= 0
-    % theta0 is the angle between j4-j3 and j4-j5
-    theta0 = acos(1-(br^2/lr^2)*(1-cos(theta2-theta1)));
-    % phi0 is the angle between j5-j1 and j5-j4
-    phi0 = (2*pi - theta0 - (theta2 - theta1))/2;
-    % lambda1 is the angle between j5-j6 and the direction of forward
-    lambda1 = pi - phi1;
-    % lambda2 is the angle between j5-j8 and the direction of forward
-    lambda2 = phi0 - lambda1;
 
-    j6x = j5x + elr * cos(lambda1);
-    j6y = j5y + elr * sin(lambda1);
-    j7x = j6x + ebr * cos(lambda2);
-    j7y = j6y + ebr * sin(lambda2);
-    j8x = j5x + ebr * cos(lambda2);
-    j8y = j5y + ebr * sin(lambda2);
-    j9x = j4x * (ebr + br) / br;
-    j9y = j4y * (ebr + br) / br;
-end
+
+% theta0 is the angle between j4-j3 and j4-j5
+theta0 = acos(1-(br^2/lr^2)*(1-cos(theta2-theta1)));
+% phi0 is the angle between j5-j1 and j5-j4
+phi0 = (2*pi - theta0 - (theta2 - theta1))/2;
+% lambda1 is the angle between j5-j6 and the direction of forward
+lambda1 = pi - phi1;
+% lambda2 is the angle between j5-j8 and the direction of forward
+lambda2 = phi0 - lambda1;
+j6x = j5x + elr * cos(lambda1);
+j6y = j5y + elr * sin(lambda1);
+j7x = j6x + ebr * cos(lambda2);
+j7y = j6y + ebr * sin(lambda2);
+j8x = j5x + ebr * cos(lambda2);
+j8y = j5y + ebr * sin(lambda2);
+j9x = j4x * zoom_factor;
+j9y = j4y * zoom_factor;
+
 
 if visualization
     % create the kinematic solver GUI object
@@ -157,6 +197,7 @@ if visualization
 
 end
 
+%% phgysical modeling
 
 
 % %%
