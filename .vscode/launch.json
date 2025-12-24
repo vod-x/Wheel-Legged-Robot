@@ -1,0 +1,46 @@
+{
+
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Jlink Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "./embedded_system/build/PYRo.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "jlink",
+            "interface": "swd",
+            "rtos": "FreeRTOS",
+            "device": "STM32H723VG",
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            "svdPath": "./svd/STM32H723.svd",
+            
+        },
+        {
+            "name": "daplink Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "./embedded_system/build/PYRo.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "interface": "swd",
+            "configFiles": [
+                "interface/cmsis-dap.cfg",
+                "target/stm32h7x.cfg"
+            ],
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4,
+            },
+            "svdPath": "./svd/STM32H723.svd"
+
+        }
+    ]
+}
+

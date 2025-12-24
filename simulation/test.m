@@ -4,4 +4,5 @@ syms y%代求变量y
 
 y = a*x^2 + b*x;%y与x的关系
 
-subs(subs(diff(y,t,2),diff(x, t),d_x),diff(d_x,t),d2_x)
+subs(subs(diff(y,t,2),diff(d_x, t),d2_x),diff(x,t),d_x)
+subs(subs(diff(y,t,2),diff(x, t, 2),d2_x),diff(x,t),d_x)

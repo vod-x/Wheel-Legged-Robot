@@ -9,9 +9,12 @@ use_syms = 0;
 % set to false to disable visualization
 visualization = 0; 
 
+
+
 %% Add paths
 
-
+addpath('./debug_func');
+calc = debug_calculator ;
 %% Init the physical properties of the model.
 
 % The unit of length is m, the unit of mass is kg, the unit of time is s, the 
@@ -189,8 +192,8 @@ j8x = j5x + ebr * cos(lambda2);
 j8y = j5y + ebr * sin(lambda2);
 j9x = j4x * zoom_factor;
 j9y = j4y * zoom_factor;
-
-
+alpha = simplify(atan2(j9y, j9x));
+L = sqrt(j9x^2 + j9y^2);
 if visualization
     % create the kinematic solver GUI object
     GUI = kinematic_solver_GUI(j1x, j1y, j2x, j2y, j3x, j3y, j4x, j4y, j5x, j5y, j6x, j6y, j7x, j7y, j8x, j8y, j9x, j9y,...
