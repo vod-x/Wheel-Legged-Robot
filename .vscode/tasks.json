@@ -16,7 +16,8 @@
                 "-GNinja",
                 "-S./embedded_system",
                 "-B./embedded_system/Build",
-                "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE"
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE",
+                "-UPRINTF_FLOAT=ON"
             ],
             "group": "build"
         },
