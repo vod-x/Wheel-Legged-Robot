@@ -6,4 +6,5 @@
     ],
     "cortex-debug.variableUseNaturalFormat": false,
 
+    "clangd.arguments": ["--compile-commands-dir=${workspaceFolder}/embedded_system/build/Debug"]
 }
