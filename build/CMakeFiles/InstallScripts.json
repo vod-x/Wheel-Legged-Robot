@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/Project/Wheel-Legged-Robot/build/cmake_install.cmake",
+		"D:/Project/Wheel-Legged-Robot/build/build_cmsis_dsp/cmake_install.cmake",
+		"D:/Project/Wheel-Legged-Robot/build/build_cmsis_dsp/Source/cmake_install.cmake",
+		"D:/Project/Wheel-Legged-Robot/build/cmake/stm32cubemx/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
