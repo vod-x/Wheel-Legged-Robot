@@ -2,6 +2,9 @@
 
     "version": "0.2.0",
     "configurations": [
+        
+        
+        
 
         {
             "name": "Jlink Debug",
@@ -9,16 +12,54 @@
             "executable": "./embedded_system/build/PYRo.elf",
             "request": "launch",
             "type": "cortex-debug",
-            "runToEntryPoint": "main",
+            "runToEntryPoint": "pyro_chassis",
             "servertype": "jlink",
             "interface": "swd",
             "rtos": "FreeRTOS",
             "device": "STM32H723VG",
             "liveWatch": {
                 "enabled": true,
-                "samplesPerSecond": 4
+                "samplesPerSecond": 4,
+                
             },
+            // "rttConfig": {
+            //     "enabled": true,
+            //     "address": "auto",
+            //     "decoders": [
+            //         {
+            //             "label": "",
+            //             "port": 0,
+            //             "type": "console"
+            //         }
+                    // {
+                    //     "type": "graph",
+                    //     "port": 0,      
+                    //     "encoding": "unsigned",
+                    //     "graphId": "1", 
+                    //     "scale": 1
+                    // },
+                    
+            //     ]
+            // },
+            // "graphConfig": [
+            //     {
+            //         "label": "Graph 1",
+            //         "timespan": 5,
+            //         "type": "realtime",
+            //         "annotate": false,
+            //         "maximum": 100000,
+            //         "minimum": 0,
+            //         "plots": [
+            //             {
+            //                 "graphId": "1", 
+            //                 "label": "data 1",
+            //                 "color": "#53753c"
+            //             },
+            //         ]
+            //     },
+            // ],
             "svdPath": "./svd/STM32H723.svd",
+            
             
         },
         {

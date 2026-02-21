@@ -4,7 +4,8 @@
  
         { "column": 80, "color": "#3d3c3d" },
     ],
-    "cortex-debug.variableUseNaturalFormat": false,
+    "cortex-debug.variableUseNaturalFormat": true,
+    "cmake.sourceDirectory": "D:/Project/wheel_legged_robot/embedded_system",
 
     "clangd.arguments": [
       "--compile-commands-dir=${workspaceFolder}/embedded_system/Build",
