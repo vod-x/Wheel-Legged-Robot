@@ -17,7 +17,10 @@
                 "-S./embedded_system",
                 "-B./embedded_system/Build",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE",
-                "-UPRINTF_FLOAT=ON"
+                "-UPRINTF_FLOAT=ON",
+                "-DROBOT_ID=INFANTRY2_ID",
+                "-DDEBUG_MODE=0",
+                "-DDEMO_MODE=0",
             ],
             "group": "build"
         },
