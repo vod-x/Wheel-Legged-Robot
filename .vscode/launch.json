@@ -12,7 +12,7 @@
             "executable": "./embedded_system/build/PYRo.elf",
             "request": "launch",
             "type": "cortex-debug",
-            "runToEntryPoint": "pyro_chassis",
+            "runToEntryPoint": "main",
             "servertype": "jlink",
             "interface": "swd",
             "rtos": "FreeRTOS",
@@ -22,6 +22,9 @@
                 "samplesPerSecond": 4,
                 
             },
+            "serverArgs": [
+                "-speed","1000"
+            ],
             // "rttConfig": {
             //     "enabled": true,
             //     "address": "auto",
@@ -79,7 +82,8 @@
                 "enabled": true,
                 "samplesPerSecond": 4,
             },
-            "svdPath": "./svd/STM32H723.svd"
+            "svdPath": "./svd/STM32H723.svd",
+            "rtos": "FreeRTOS"
 
         }
     ]

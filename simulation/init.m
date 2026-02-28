@@ -5,7 +5,7 @@ close all;
 %% Set which modules to run.
 
 % set to 1 to use syms variables, use numeric values otherwise
-use_syms = 0;
+use_syms = 1;
 % set to false to disable visualization
 visualization = 0; 
 
