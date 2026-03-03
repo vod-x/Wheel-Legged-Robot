@@ -20,7 +20,7 @@
                 "-B./embedded_system/Build",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE",
                 "-UPRINTF_FLOAT=ON",
-                "-DROBOT_ID=INFANTRY2_ID",
+                "-DROBOT_ID=4",
                 "-DDEBUG_MODE=0",
                 "-DDEMO_MODE=0",
                 // "-DIMU_CALIBRATION_EN=0",
@@ -40,6 +40,33 @@
             "group": "build"
         },
   
+        {
+            "label": "J-Link Flash",
+            "type": "shell",
+            "command": "JLink.exe",
+            "args": [
+                "-NoGui",
+                "1",
+                "-CommandFile",
+                // "/.vscode/flash.jlink"
+                "D:/Project/wheel_legged_robot/flash.jlink"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": true,
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        }
     ]
+
     
 }

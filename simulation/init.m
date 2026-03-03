@@ -5,7 +5,7 @@ close all;
 %% Set which modules to run.
 
 % set to 1 to use syms variables, use numeric values otherwise
-use_syms = 1;
+use_syms = 0;
 % set to false to disable visualization
 visualization = 0; 
 
@@ -13,7 +13,7 @@ visualization = 0;
 
 %% Add paths
 
-addpath('./debug_func');
+addpath('simulation/debug_func');
 calc = debug_calculator ;
 %% Init the physical properties of the model.
 
@@ -134,7 +134,9 @@ d_x = zoom_factor * subs(diff(j4x, t),...
 d_y = zoom_factor * subs(diff(j4y, t),...
     [diff(j1x,t), diff(j1y,t),diff(theta1,t), diff(theta2,t), ...
     diff(phi1, t), diff(phi2, t)], [0, 0, d_theta1, d_theta2, d_phi1, d_phi2]);
-
+% calculate the diffrential of polar coordinates of the end effector 
+diff_L = cos(alpha) * d_x + sin(alpha) * d_y;
+diff_alpha = (-sin(alpha) * d_x + cos(alpha) * d_y) / L;
 d_X = [d_x; d_y];
 d_q = [d_theta1; d_theta2];
 d_X = simplify(collect(d_X, d_q));

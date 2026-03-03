@@ -1,0 +1,10 @@
+device STM32H723VG        // 改成你的芯片
+if SWD
+speed 4000                // 下载速度（kHz）
+r                          // reset
+halt
+loadfile embedded_system/build/PYRo.elf   // 或 .elf
+r 
+sleep 3000
+g
+exit
