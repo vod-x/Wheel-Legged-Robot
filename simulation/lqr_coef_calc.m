@@ -55,9 +55,9 @@ for step = 1:i
     [Ad, Bd] = c2d(A, B, 0.001);
     % set Q and R matrix
     % [x, dx, gamma, d_gamma, beta, d_beta]
-    Q = diag([0.002, 0.015, 5000, 1, 5, 5]);
+    Q = diag([0.04, 4, 10, 2, 3, 1]);
     % [T_w, T_p]
-    R = diag([0.25, 0.25]);
+    R = diag([1, 0.1]);
     Ks(:,:,step) =  dlqr(Ad, Bd, Q, R);
 
 end
@@ -68,6 +68,15 @@ for x = 1:2
     for y = 1:6
         p = vpa(polyfit(L_data, reshape(Ks(x,y,:), 1, length(L_data)), 3), 8);
         K(x,y) = p(1)*L0^3 + p(2)*L0^2 + p(3)*L0 + p(4);
-        fprintf('%.4f, %.4f, %.4f, %.4f,\n', p(1), p(2), p(3), p(4));
+        % fprintf('%.4f, %.4f, %.4f, %.4f\n', p(4), p(3), p(2), p(1));
+        coef(x,y,:) = [p(4), p(3), p(2), p(1)];
     end
 end
+
+fid = fopen(fullfile(filename,'lqr_coef.txt'),'w');
+for x = 1:2
+    for y = 1:6
+        fprintf(fid, '%.4f, %.4f, %.4f, %.4f,', coef(x,y,:));
+    end
+end
+calc_K(0.15)
