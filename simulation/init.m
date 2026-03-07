@@ -97,7 +97,7 @@ syms Fc Ft T;
 syms e_Fc e_Ft e_T;
 
 % The angle between ground and the end effector.
-syms beta(t) d_beta d2_beta;
+syms beta_sym(t) beta d_beta d2_beta;
 
 
 
@@ -212,7 +212,7 @@ syms T_w;
 % the torque of virtual leg
 syms T_p;
 % the position and velocity of the center of mass of main body
-syms x(t) d_x d2_x;
+syms x_sym(t) x d_x d2_x;
 syms x_p(t) y_p(t);
 syms x_b(t) y_b(t);
 % the variable of constrain force
@@ -224,12 +224,12 @@ syms m_w m_p  m_b;
 syms I_w I_p  I_b;
 syms g;
 
-syms gamma(t) d_gamma d2_gamma;
+syms gamma_sym(t) gamma d_gamma d2_gamma;
 
-x_b = x - sin(beta) * (L_wp + L_pb) - sin(gamma) * L_c;
-y_b = cos(beta) * (L_wp + L_pb) + cos(gamma) * L_c;
-x_p = x - sin(beta) * L_wp;
-y_p = cos(beta) * L_wp;
+x_b = x_sym - sin(beta_sym) * (L_wp + L_pb) - sin(gamma_sym) * L_c;
+y_b = cos(beta_sym) * (L_wp + L_pb) + cos(gamma_sym) * L_c;
+x_p = x_sym - sin(beta_sym) * L_wp;
+y_p = cos(beta_sym) * L_wp;
 
 % solve constrain force
 constrain_eq1 = N_pb                  == m_b * diff(x_b, t ,2);
@@ -241,29 +241,48 @@ constrain_solve = solve([constrain_eq1, constrain_eq2, constrain_eq3, constrain_
     [N_pb, P_pb, N_wp, P_wp]);
 % N_pb = subs(subs(simplify(constrain_solve.N_pb),[diff(x,t), diff(beta,t), diff(gamma,t)], [d_x, d_beta, d_gamma]), [diff(x,t,t), diff(beta,t,t), diff(gamma,t,t)], [d2_x, d2_beta, d2_gamma]);
 % N_pb = subs((constrain_solve.N_pb),[diff(x,t), diff(beta,t), diff(gamma,t)], [d_x, d_beta, d_gamma]);
-N_pb = subs(subs(simplify(constrain_solve.N_pb),[diff(x,t,t), diff(beta,t,t), diff(gamma,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x,t), diff(beta,t), diff(gamma,t)], [d_x, d_beta, d_gamma]);
-P_pb = subs(subs(simplify(constrain_solve.P_pb),[diff(x,t,t), diff(beta,t,t), diff(gamma,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x,t), diff(beta,t), diff(gamma,t)], [d_x, d_beta, d_gamma]);
-N_wp = subs(subs(simplify(constrain_solve.N_wp),[diff(x,t,t), diff(beta,t,t), diff(gamma,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x,t), diff(beta,t), diff(gamma,t)], [d_x, d_beta, d_gamma]);
-P_wp = subs(subs(simplify(constrain_solve.P_wp),[diff(x,t,t), diff(beta,t,t), diff(gamma,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x,t), diff(beta,t), diff(gamma,t)], [d_x, d_beta, d_gamma]);
+N_pb = subs(subs(simplify(constrain_solve.N_pb),[diff(x_sym,t,t), diff(beta_sym,t,t), diff(gamma_sym,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x_sym,t), diff(beta_sym,t), diff(gamma_sym,t)], [d_x, d_beta, d_gamma]);
+P_pb = subs(subs(simplify(constrain_solve.P_pb),[diff(x_sym,t,t), diff(beta_sym,t,t), diff(gamma_sym,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x_sym,t), diff(beta_sym,t), diff(gamma_sym,t)], [d_x, d_beta, d_gamma]);
+N_wp = subs(subs(simplify(constrain_solve.N_wp),[diff(x_sym,t,t), diff(beta_sym,t,t), diff(gamma_sym,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x_sym,t), diff(beta_sym,t), diff(gamma_sym,t)], [d_x, d_beta, d_gamma]);
+P_wp = subs(subs(simplify(constrain_solve.P_wp),[diff(x_sym,t,t), diff(beta_sym,t,t), diff(gamma_sym,t,t)], [d2_x, d2_beta, d2_gamma]), [diff(x_sym,t), diff(beta_sym,t), diff(gamma_sym,t)], [d_x, d_beta, d_gamma]);
 
 % dynamic equations
 dyn_eq1 = isolate((I_w * d2_x / R_w == -T_w - f * R_w), f) - ...
                                 isolate((m_w * d2_x == f - N_wp), f);
-dyn_eq2 = I_p * d2_beta == T_p - T_w + P_wp * L_wp * sin(beta) + ...
-                N_wp * L_wp * cos(beta) + P_pb * L_pb * sin(beta) + ...
-                N_pb * L_pb * cos(beta);
-dyn_eq3 = I_b * d2_gamma == -T_p + P_pb * L_c * sin(gamma) + ...
-                                N_pb * L_c * cos(gamma);
+dyn_eq2 = I_p * d2_beta == T_p - T_w + P_wp * L_wp * sin(beta_sym) + ...
+                N_wp * L_wp * cos(beta_sym) + P_pb * L_pb * sin(beta_sym) + ...
+                N_pb * L_pb * cos(beta_sym);
+dyn_eq3 = I_b * d2_gamma == -T_p + P_pb * L_c * sin(gamma_sym) + ...
+                                N_pb * L_c * cos(gamma_sym);
     
 model_solve = solve([dyn_eq1, dyn_eq2, dyn_eq3], [d2_x, d2_beta, d2_gamma]);
-X = [x, d_x, beta, d_beta, gamma, d_gamma].';
+model_solve = subs(model_solve,{x_sym, beta_sym,gamma_sym},{x,beta,gamma});
+% X = [x, d_x, beta, d_beta, gamma, d_gamma].';
+% dX = [d_x, simplify(model_solve.d2_x), ...  
+%     d_beta, simplify(model_solve.d2_beta), ...
+%     d_gamma, simplify(model_solve.d2_gamma)].';
+X = [x, d_x, gamma, d_gamma, beta, d_beta].';
 dX = [d_x, simplify(model_solve.d2_x), ...  
-    d_beta, simplify(model_solve.d2_beta), ...
-    d_gamma, simplify(model_solve.d2_gamma)].';
+    d_gamma, simplify(model_solve.d2_gamma),...
+    d_beta, simplify(model_solve.d2_beta)].';
 
 U = [T_w; T_p];
-
 A_sym = jacobian(dX, X);
 B_sym = jacobian(dX, U);
+% A_sym = subs(jacobian(dX, X),{x_sym(t),beta_sym(t),gamma_sym(t)},{x,beta,gamma});
+% B_sym = subs(jacobian(dX, U),{x_sym(t),beta_sym(t),gamma_sym(t)},{x,beta,gamma});
+syms phi theta d_phi d_theta d2_phi d2_theta
 
+A_test = subs(A_sym,{beta,d_beta,d2_beta,gamma,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+B_test = subs(B_sym,{beta,d_beta,d2_beta,gamma,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+N_pb_test = subs(N_pb,{beta_sym,d_beta,d2_beta,gamma_sym,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+P_pb_test = subs(P_pb,{beta_sym,d_beta,d2_beta,gamma_sym,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+N_wp_test = subs(N_wp,{beta_sym,d_beta,d2_beta,gamma_sym,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+P_wp_test = subs(P_wp,{beta_sym,d_beta,d2_beta,gamma_sym,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+d2_x_test = subs(model_solve.d2_x,{beta,d_beta,d2_beta,gamma,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+d2_beta_test = subs(model_solve.d2_beta,{beta,d_beta,d2_beta,gamma,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+d2_gamma_test = subs(model_solve.d2_gamma,{beta,d_beta,d2_beta,gamma,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+dX_test = subs(dX,{beta_sym,d_beta,d2_beta,gamma_sym,d_gamma,d2_gamma},{theta,d_theta,d2_theta,phi,d_phi,d2_phi});
+save(fullfile(fileparts(mfilename("fullpath")),'ABmat'),'A_sym',"B_sym")
+save(fullfile(fileparts(mfilename("fullpath")),'test_data'),'A_test',"B_test", "N_pb_test", "P_pb_test", "N_wp_test", "P_wp_test","d2_x_test", "d2_beta_test", "d2_gamma_test", "dX_test")
 
