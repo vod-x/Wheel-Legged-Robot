@@ -1,4 +1,4 @@
-%% Clear the workspace and close all figures.
+q%% Clear the workspace and close all figures.
 clear;
 close all;
 
