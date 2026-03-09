@@ -65,6 +65,21 @@
                 "panel": "shared"
             },
             "problemMatcher": []
+        },
+         {
+            "label": "download",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-f",
+                "interface/cmsis-dap.cfg",
+                "-f",
+                "target/stm32h7x.cfg",
+                "-c",
+                "program ./embedded_system/Build/PYRo.elf verify exit reset"
+            ],
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 
