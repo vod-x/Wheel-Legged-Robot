@@ -222,6 +222,7 @@ syms N_wp P_wp N_pb P_pb f;
 syms R_w L_wp L_pb L_c;
 syms m_w m_p  m_b;
 syms I_w I_p  I_b;
+syms yaw d_yaw
 syms g;
 
 syms gamma_sym(t) gamma d_gamma d2_gamma;
@@ -257,6 +258,7 @@ dyn_eq3 = I_b * d2_gamma == -T_p + P_pb * L_c * sin(gamma_sym) + ...
     
 model_solve = solve([dyn_eq1, dyn_eq2, dyn_eq3], [d2_x, d2_beta, d2_gamma]);
 model_solve = subs(model_solve,{x_sym, beta_sym,gamma_sym},{x,beta,gamma});
+yaw = 
 % X = [x, d_x, beta, d_beta, gamma, d_gamma].';
 % dX = [d_x, simplify(model_solve.d2_x), ...  
 %     d_beta, simplify(model_solve.d2_beta), ...
