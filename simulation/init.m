@@ -1,4 +1,4 @@
-q%% Clear the workspace and close all figures.
+%% Clear the workspace and close all figures.
 clear;
 close all;
 
@@ -144,10 +144,11 @@ d_X = simplify(collect(d_X, d_q));
 J = simplify(jacobian(d_X, d_q));
 % rotation matrix 
 R = [-sin(alpha), cos(alpha);
-     -cos(alpha),  sin(alpha)];
+     cos(alpha),  sin(alpha)];
 % zoom matrix
 Z = [0, 1/L;
      1, 0];
+
 % VMC transformation matrix
 % [T1; T2] =T * [F; T]
 T = J.'* R * Z;
@@ -254,13 +255,15 @@ dyn_eq2 = I_p * d2_beta == T_p - T_w + P_wp * L_wp * sin(beta_sym) + ...
                 N_pb * L_pb * cos(beta_sym);
 dyn_eq3 = I_b * d2_gamma == -T_p + P_pb * L_c * sin(gamma_sym) + ...
                                 N_pb * L_c * cos(gamma_sym);
-    
+
+syms x_l x_r d_x_l d_x_r  
+syms beta_l beta_r d_beta_l d_beta_r
+syms gamma_l gamma_r d_gamma_l d_gamma_r
+syms yaw d_yaw
+syms x_b d_x_b
+
 model_solve = solve([dyn_eq1, dyn_eq2, dyn_eq3], [d2_x, d2_beta, d2_gamma]);
 model_solve = subs(model_solve,{x_sym, beta_sym,gamma_sym},{x,beta,gamma});
-% X = [x, d_x, beta, d_beta, gamma, d_gamma].';
-% dX = [d_x, simplify(model_solve.d2_x), ...  
-%     d_beta, simplify(model_solve.d2_beta), ...
-%     d_gamma, simplify(model_solve.d2_gamma)].';
 X = [x, d_x, gamma, d_gamma, beta, d_beta].';
 dX = [d_x, simplify(model_solve.d2_x), ...  
     d_gamma, simplify(model_solve.d2_gamma),...
@@ -269,6 +272,9 @@ dX = [d_x, simplify(model_solve.d2_x), ...
 U = [T_w; T_p];
 A_sym = jacobian(dX, X);
 B_sym = jacobian(dX, U);
+
+model_solve_r = subs(model_solve,{x,d_x,beta,d_beta,gamma,d_gamma},{x_r,d_x_r,beta_r,d_beta_r,gamma_r,d_gamma_r});
+model_solve_l = subs(model_solve,{x,d_x,beta,d_beta,gamma,d_gamma},{x_l,d_x_l,beta_l,d_beta_l,gamma_l,d_gamma_l});
 % A_sym = subs(jacobian(dX, X),{x_sym(t),beta_sym(t),gamma_sym(t)},{x,beta,gamma});
 % B_sym = subs(jacobian(dX, U),{x_sym(t),beta_sym(t),gamma_sym(t)},{x,beta,gamma});
 syms phi theta d_phi d_theta d2_phi d2_theta
