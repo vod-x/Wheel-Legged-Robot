@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<JScopeProject>
+    <FileVersion major="1" minor="1" />
+    <Project>
+        <Configuration>
+            <JLink>
+                <Options Connection="1" IsRTTSession="0" IsRTTWithTimeStamp="0" IsRTTPlus="0" SamplingPeriod="100" SerialNo="0" JTAG_IRPre="0" JTAG_DRPre="0" IP="" TargetDevice="STM32H723VG" TargetInterface="SWD" InterfaceSpeed="4000" />
+            </JLink>
+            <ElfFile Name="D:\Project\Wheel-Legged-Robot\embedded_system\Build\PYRo.elf" />
+            <Scope>
+                <Options TimeResolutionUs="1000000" />
+            </Scope>
+            <Trigger>
+                <Options Level="0" Symbol="_acc_without_g_b[0]" On="1" Auto="0" Rise="1" Fall="0" />
+            </Trigger>
+        </Configuration>
+        <Windows>
+            <Graph Show="1" />
+            <Watch Show="1" />
+        </Windows>
+        <SelectedSymbols>
+            <Symbol>
+                <Options Name="_acc_without_g_b[0]" Address="0x2000DFE4" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._acc_without_g_b[0]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_acc_without_g_b[1]" Address="0x2000DFE8" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="255" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._acc_without_g_b[1]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_acc_without_g_b[2]" Address="0x2000DFEC" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._acc_without_g_b[2]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_acc_without_g_n[0]" Address="0x2000DFF0" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._acc_without_g_n[0]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_acc_without_g_n[1]" Address="0x2000DFF4" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._acc_without_g_n[1]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_acc_without_g_n[2]" Address="0x2000DFF8" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._acc_without_g_n[2]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_angle_b[0]" Address="0x2000DFFC" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="255" GraphColorBlue="0" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._angle_b[0]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_angle_b[1]" Address="0x2000E000" Type="float" TypeID="1" Size="4" GraphColorRed="0" GraphColorGreen="0" GraphColorBlue="255" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._angle_b[1]" />
+            </Symbol>
+            <Symbol>
+                <Options Name="_angle_b[2]" Address="0x2000E004" Type="float" TypeID="1" Size="4" GraphColorRed="255" GraphColorGreen="0" GraphColorBlue="0" YMinSampled="1.79769e+308" YMaxSampled="-1.79769e+308" YAvgSampled="0" Offset="0" ShowInGraph="1" YOffset="0" IsAutoConfig="0" YResolution="1" MaxValue="-2147483648" File="D:/Project/Wheel-Legged-Robot/embedded_system/PYRo/Component/INS/pyro_ins.cpp" DrawStyle="0" NameWithParents=".instance._angle_b[2]" />
+            </Symbol>
+        </SelectedSymbols>
+    </Project>
+</JScopeProject>

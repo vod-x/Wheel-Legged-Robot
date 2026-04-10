@@ -33,7 +33,6 @@ void OnProjectLoad (void) {
   // User settings
   //
   File.Open ("$(ProjectDir)/embedded_system/Build/PYRo.elf");
-  Edit.SysVar (VAR_HSS_SPEED, FREQ_100_HZ);
 }
 
 /*********************************************************************
