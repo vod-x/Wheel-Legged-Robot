@@ -6,5 +6,6 @@
 		"--query-driver=D:/Toolchain/arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi/bin/*"
 	],
 	"C_Cpp.intelliSenseEngine": "Disabled",
-	"cmake.ignoreCMakeListsMissing": true
+	"cmake.ignoreCMakeListsMissing": true,
+	"cortex-debug.variableUseNaturalFormat": true
 }
