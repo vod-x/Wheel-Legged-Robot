@@ -55,9 +55,9 @@ for step = 1:i
     [Ad, Bd] = c2d(A, B, 0.001);
     % set Q and R matrix
     % [x, dx, gamma, d_gamma, beta, d_beta]
-    Q = diag([10, 20, 60, 5, 10, 5]);
+    Q = diag([10, 5, 250, 5, 100, 5]);
     % [T_w, T_p]
-    R = diag([2, 0.1]);
+    R = diag([1, 0.1]);
     Ks(:,:,step) =  dlqr(Ad, Bd, Q, R);
 
 end
