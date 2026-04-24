@@ -20,12 +20,14 @@ p = polyfit(L_data,L_wp_data,3);
 L_wp_func = p(1)*L_sym^3 + p(2)*L_sym^2 + p(3)*L_sym + p(4);
 
 % set balance point
-syms beta d_beta gamma d_gamma d_x
-beta = 0;
+syms beta d_beta gamma d_gamma d_x T_w T_p
+beta = -0.1;
 d_beta = 0;
 gamma = 0;
 d_gamma = 0;
 d_x = 0;
+T_w = 0;
+T_p = 0;
 
 % set physical parameters
 syms m_b m_p m_w
@@ -55,9 +57,10 @@ for step = 1:i
     [Ad, Bd] = c2d(A, B, 0.001);
     % set Q and R matrix
     % [x, dx, gamma, d_gamma, beta, d_beta]
-    Q = diag([10, 5, 250, 5, 100, 5]);
+    % Q = diag([4, 4, 500, 5, 2, 2]);
+    Q = diag([5, 5, 500, 10, 400, 10]);
     % [T_w, T_p]
-    R = diag([1, 0.1]);
+    R = diag([1.5, 0.1]);
     Ks(:,:,step) =  dlqr(Ad, Bd, Q, R);
 
 end
