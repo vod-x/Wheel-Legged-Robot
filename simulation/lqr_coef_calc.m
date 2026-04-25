@@ -58,9 +58,11 @@ for step = 1:i
     % set Q and R matrix
     % [x, dx, gamma, d_gamma, beta, d_beta]
     % Q = diag([4, 4, 500, 5, 2, 2]);
-    Q = diag([5, 5, 500, 10, 400, 10]);
+    Q = diag([50, 30, 800, 20, 500, 10]);
     % [T_w, T_p]
-    R = diag([1.5, 0.1]);
+    % R = diag([1.5, 0.1]);
+    R = diag([2.0, 0.1]);
+
     Ks(:,:,step) =  dlqr(Ad, Bd, Q, R);
 
 end
