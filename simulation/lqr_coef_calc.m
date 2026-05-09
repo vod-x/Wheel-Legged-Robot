@@ -61,7 +61,7 @@ for step = 1:i
     Q = diag([80, 20, 200, 5, 200, 5]);
     % [T_w, T_p]
     % R = diag([1.5, 0.1]);
-    R = diag([1.0, 0.1]);
+    R = diag([2.0, 0.1]);
 
     Ks(:,:,step) =  dlqr(Ad, Bd, Q, R);
 
