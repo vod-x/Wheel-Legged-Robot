@@ -69,6 +69,7 @@
             "name": "daplink Debug",
             "cwd": "${workspaceFolder}",
             "executable": "./embedded_system/build/PYRo.elf",
+            // "executable": "PYRo_Robot.elf",
             "request": "launch",
             "type": "cortex-debug",
             "runToEntryPoint": "main",

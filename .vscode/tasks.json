@@ -9,7 +9,7 @@
             "command": "echo Hello"
         },
         {
-            "label": "Cmake Configure",
+            "label": "Cmake Configure 1",
             "type": "shell",
             "command": "cmake",
             "args": [
@@ -18,10 +18,33 @@
                 "-GNinja",
                 "-S./embedded_system",
                 "-B./embedded_system/Build",
+                "-DCMAKE_C_FLAGS_DEBUG:STRING=-Og -g3",
+                "-DCMAKE_CXX_FLAGS_DEBUG:STRING=-Og -g3",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE",
+                "-UPRINTF_FLOAT=ON",
+                "-DROBOT_ID=3",
+                "-DDEBUG_MODE=1",
+                "-DDEMO_MODE=0",
+                // "-DIMU_CALIBRATION_EN=0",
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Cmake Configure 2",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                // "-O0",
+                // "-g3",
+                "-GNinja",
+                "-S./embedded_system",
+                "-B./embedded_system/Build",
+                "-DCMAKE_C_FLAGS_DEBUG:STRING=-Og -g3",
+                "-DCMAKE_CXX_FLAGS_DEBUG:STRING=-Og -g3",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE",
                 "-UPRINTF_FLOAT=ON",
                 "-DROBOT_ID=4",
-                "-DDEBUG_MODE=0",
+                "-DDEBUG_MODE=1",
                 "-DDEMO_MODE=0",
                 // "-DIMU_CALIBRATION_EN=0",
             ],
