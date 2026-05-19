@@ -9,13 +9,12 @@ $hooksDir = ".githooks"
 git config commit.template $template
 Write-Host "[OK] commit.template -> $template"
 
-# 2. 将 .githooks/ 中的 hook 复制到 .git/hooks/（Git 原生目录，无需可执行权限）
-$srcHooks = Join-Path $root ".githooks"
-$dstHooks = Join-Path $root ".git\hooks"
-Get-ChildItem $srcHooks | ForEach-Object {
-    Copy-Item $_.FullName (Join-Path $dstHooks $_.Name) -Force
-    Write-Host "[OK] hook copied: $($_.Name)"
-}
+# 2. 通过 sh 复制 hook（保留可执行权限，Windows NTFS 下 PowerShell 复制会丢失权限）
+$sh = Get-ChildItem "E:\Software\Git\bin\sh.exe","C:\Program Files\Git\bin\sh.exe" -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+if (-not $sh) { $sh = (Get-Command git | Split-Path | Split-Path) + "\bin\sh.exe" }
+$rootUnix = $root -replace '\\','/' -replace '^([A-Z]):', { '/'+$args[0][0].ToString().ToLower() }
+& $sh -c "cp '$rootUnix/.githooks/prepare-commit-msg' /tmp/_hook && chmod +x /tmp/_hook && cp /tmp/_hook '$rootUnix/.git/hooks/prepare-commit-msg'"
+Write-Host "[OK] hook deployed with executable permission"
 
 # 3. 确保 core.hooksPath 使用默认值（.git/hooks）
 git config --unset core.hooksPath 2>$null

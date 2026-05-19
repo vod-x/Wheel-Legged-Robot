@@ -1,7 +1,6 @@
-
 # ============================================================
 # Commit Message Template — Wheel-Legged Embodied Robot
-# 格式: <type>(<scope>): <subject>
+# 格式: type(scope): subject
 # ─────────────────────────────────────────────────────────────
 # TYPE:   feat | fix | perf | refactor | ctrl | sim | model |
 #         data | embed | docs | chore | test
@@ -12,7 +11,8 @@
 # SUBJECT: 动词开头，≤72字符，不加句号
 # ============================================================
 
-<type>(<scope>): <subject>
+type(scope): subject
+
 
 # ── 变更文件说明（自动生成）────────────────────────────────────
 __FILES__

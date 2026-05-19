@@ -21,7 +21,7 @@ L_wp_func = p(1)*L_sym^3 + p(2)*L_sym^2 + p(3)*L_sym + p(4);
 
 % set balance point
 syms beta d_beta gamma d_gamma d_x T_w T_p
-beta = -0.1;
+beta = 0.1;
 d_beta = 0;
 gamma = 0;
 d_gamma = 0;
@@ -58,7 +58,7 @@ for step = 1:i
     % set Q and R matrix
     % [x, dx, gamma, d_gamma, beta, d_beta]
     % Q = diag([4, 4, 500, 5, 2, 2]);
-    Q = diag([80, 20, 200, 5, 200, 5]);
+    Q = diag([80, 20, 500, 5, 200, 5]);
     % [T_w, T_p]
     % R = diag([1.5, 0.1]);
     R = diag([2.0, 0.1]);

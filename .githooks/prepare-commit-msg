@@ -21,7 +21,7 @@ TMPFILE="${COMMIT_MSG_FILE}.tmp"
 # padding 修正：CJK 字符占 3 字节但显示 2 列，需补偿差值
 FILE_BLOCK=""
 while IFS= read -r f; do
-    FILE_BLOCK="${FILE_BLOCK}   $f\n   \n"
+    FILE_BLOCK="${FILE_BLOCK}$f\n   \n"
 done <<EOF
 $STAGED
 EOF
