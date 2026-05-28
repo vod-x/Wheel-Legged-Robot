@@ -57,12 +57,11 @@ for step = 1:i
     [Ad, Bd] = c2d(A, B, 0.001);
     % set Q and R matrix
     % [x, dx, gamma, d_gamma, beta, d_beta]
-    % Q = diag([4, 4, 500, 5, 2, 2]);
-    % Q = diag([5, 80, 400, 10, 200, 5]);
-    Q = diag([5, 80, 400, 10, 30, 1]);
+    % Q = diag([5, 80, 400, 10, 30, 1]);
+    Q = diag([5, 80, 400, 10, 200, 5]);
 
     % [T_w, T_p]
-    % R = diag([1.5, 0.1]);
+    % R = diag([1.0, 0.05]);
     R = diag([1.0, 0.025]);
 
     Ks(:,:,step) =  dlqr(Ad, Bd, Q, R);
