@@ -1,9 +1,11 @@
 {
-
-   "editor.rulers": [
- 
-        { "column": 80, "color": "#3d3c3d" },
-    ],
-    "cortex-debug.variableUseNaturalFormat": false,
-
+	"clangd.arguments": [
+		"--compile-commands-dir=${workspaceFolder}/embedded_system/Build",
+		"--background-index",
+		"--header-insertion=never",
+		"--query-driver=D:/Toolchain/arm-gnu-toolchain-14.3.rel1-mingw-w64-i686-arm-none-eabi/bin/*"
+	],
+	"C_Cpp.intelliSenseEngine": "Disabled",
+	"cmake.ignoreCMakeListsMissing": true,
+	"cortex-debug.variableUseNaturalFormat": true
 }

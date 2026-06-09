@@ -1,0 +1,3 @@
+[submodule "embedded_system"]
+	path = embedded_system
+	url = https://github.com/vod-x/PYRo-uCtrl-Unity-dev.git
